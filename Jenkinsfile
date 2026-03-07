@@ -14,11 +14,26 @@ pipeline {
                 sh 'npm install webdriverio'
             }
         }
+        stage('Start Appium') {
+            steps {
+                sh '''
+                    export ANDROID_HOME=/usr/lib/android-sdk
+                    export ANDROID_SDK_ROOT=/usr/lib/android-sdk
+                    pkill -f appium || true
+                    sleep 2
+                    appium server --port 4723 --base-path /wd/hub --use-plugins=device-farm --plugin-device-farm-platform=android &
+                    sleep 10
+                '''
+            }
+        }
         stage('Run Tests') {
             steps {
-                sh 'node test.js'
+                sh '''
+                    export APPIUM_HOST=localhost
+                    export APPIUM_PORT=4723
+                    node test.js
+                '''
             }
         }
     }
 }
-

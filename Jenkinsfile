@@ -20,9 +20,10 @@ pipeline {
                     export ANDROID_HOME=/usr/lib/android-sdk
                     export ANDROID_SDK_ROOT=/usr/lib/android-sdk
                     pkill -f appium || true
-                    sleep 2
-                    appium server --port 4723 --base-path /wd/hub --use-plugins=device-farm --plugin-device-farm-platform=android &
-                    sleep 10
+                    sleep 3
+                    nohup appium server --port 4723 --base-path /wd/hub --use-plugins=device-farm --plugin-device-farm-platform=android > /tmp/appium.log 2>&1 &
+                    sleep 15
+                    cat /tmp/appium.log
                 '''
             }
         }
@@ -34,6 +35,11 @@ pipeline {
                     node test.js
                 '''
             }
+        }
+    }
+    post {
+        always {
+            sh 'pkill -f appium || true'
         }
     }
 }

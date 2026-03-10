@@ -19,6 +19,13 @@ async function runTest() {
     const appsItem = await driver.$('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("Apps"))');
     await appsItem.click();
     console.log('Apps bosildi!');
+    await driver.pause(2000);
+    
+    // Apps sahifasi ochilganini tekshirish
+    const appsList = await driver.$('//*[@resource-id="com.android.settings:id/apps_list"]');
+    if (await appsList.isDisplayed()) {
+      console.log('TEST PASSED: Apps sahifasi ochildi!');
+    }
   } finally {
     await driver.pause(1000);
     await driver.deleteSession();

@@ -23,7 +23,6 @@ pipeline {
                     sleep 3
                     nohup appium server --port 4723 --base-path /wd/hub --use-plugins=device-farm --plugin-device-farm-platform=android > /tmp/appium.log 2>&1 &
                     sleep 15
-                    cat /tmp/appium.log
                 '''
             }
         }
@@ -35,11 +34,6 @@ pipeline {
                     node test.js
                 '''
             }
-        }
-    }
-    post {
-        always {
-            sh 'pkill -f appium || true'
         }
     }
 }

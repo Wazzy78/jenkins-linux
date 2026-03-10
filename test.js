@@ -16,19 +16,22 @@ const wdOpts = {
 async function runTest() {
   const driver = await remote(wdOpts);
   try {
+    // Apps ga scroll qilib kirish
     const appsItem = await driver.$('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("Apps"))');
     await appsItem.click();
-    console.log('Apps bosildi!');
     await driver.pause(2000);
-    
-    // Apps sahifasi ochilganini tekshirish
-    const appsList = await driver.$('//*[@resource-id="com.android.settings:id/apps_list"]');
-    if (await appsList.isDisplayed()) {
-      console.log('TEST PASSED: Apps sahifasi ochildi!');
+    console.log('Apps bosildi!');
+
+    // Apps ichida All apps ni topish
+    const allApps = await driver.$('//*[@text="All apps"]');
+    if (await allApps.isDisplayed()) {
+      console.log('TEST PASSED!');
     }
-  } finally {
     await driver.pause(1000);
     await driver.deleteSession();
+  } catch(e) {
+    await driver.deleteSession();
+    throw e;
   }
 }
 runTest().catch(console.error);

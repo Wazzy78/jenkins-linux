@@ -16,8 +16,9 @@ const wdOpts = {
 async function runTest() {
   const driver = await remote(wdOpts);
   try {
-    const appsItem = await driver.$('//*[@text="Apps"]');
+    const appsItem = await driver.$('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("Apps"))');
     await appsItem.click();
+    console.log('Apps bosildi!');
   } finally {
     await driver.pause(1000);
     await driver.deleteSession();

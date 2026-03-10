@@ -3,12 +3,6 @@ pipeline {
         label 'appium-node'
     }
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/Wazzy78/jenkins-linux.git'
-            }
-        }
         stage('Install Dependencies') {
             steps {
                 sh 'npm install webdriverio'
@@ -16,24 +10,18 @@ pipeline {
         }
         stage('Start Appium') {
             steps {
-                sh '''#!/bin/bash
-                    export ANDROID_HOME=/usr/lib/android-sdk
-                    export ANDROID_SDK_ROOT=/usr/lib/android-sdk
-                    /usr/bin/pkill -f appium; true
-                    sleep 3
-                    nohup /usr/bin/appium server --port 4723 --base-path /wd/hub --use-plugins=device-farm --plugin-device-farm-platform=android > /tmp/appium.log 2>&1 &
-                    sleep 15
-                    cat /tmp/appium.log
-                '''
+                script {
+                    sh 'pkill -f appium || true'
+                    sh 'sleep 2'
+                    sh 'export ANDROID_HOME=/usr/lib/android-sdk && export ANDROID_SDK_ROOT=/usr/lib/android-sdk && nohup /usr/bin/appium server --port 4723 --base-path /wd/hub --use-plugins=device-farm --plugin-device-farm-platform=android > /tmp/appium.log 2>&1 &'
+                    sh 'sleep 15'
+                    sh 'cat /tmp/appium.log'
+                }
             }
         }
         stage('Run Tests') {
             steps {
-                sh '''#!/bin/bash
-                    export APPIUM_HOST=localhost
-                    export APPIUM_PORT=4723
-                    node test.js
-                '''
+                sh 'APPIUM_HOST=localhost APPIUM_PORT=4723 node test.js'
             }
         }
     }
